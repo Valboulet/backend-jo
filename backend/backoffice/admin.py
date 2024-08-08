@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from backoffice.models import User, Customer, UserOffer, Cart, Ticket, Offer, Event
+
+admin.site.register(Offer)
