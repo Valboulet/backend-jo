@@ -6,12 +6,15 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Offer(models.Model):
     id_offer = models.SmallAutoField(primary_key=True, null=False)
-    offer_name = models.CharField(max_length=10, null=False)
-    number_of_seats = models.SmallIntegerField(null=False,
+    offer_name = models.CharField(max_length=10, null=False, verbose_name="Nom de l'offre")
+    number_of_seats = models.SmallIntegerField(null=False, verbose_name="Nombre de places",
                                                validators=[MinValueValidator(1), 
                                                            MaxValueValidator(10)])
-    discount = models.DecimalField(max_digits=4, decimal_places=2, null=False, validators=[MinValueValidator(0)])
-                                
+    discount = models.DecimalField(max_digits=4, decimal_places=2, null=False, verbose_name="Réduction", validators=[MinValueValidator(0)])
+
+    class Meta:
+        verbose_name ="Offre"
+        verbose_name_plural ="Offres"
 
     def __str__(self) -> str:
         return f'{self.offer_name}'
@@ -19,55 +22,73 @@ class Offer(models.Model):
 
 class User(models.Model):
     id_user = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    firstname = models.CharField(max_length=50, null=False)
-    lastname = models.CharField(max_length=50, null=False)
-    date_of_birth = models.DateField(null=False)
-    country = models.CharField(max_length=75, null=False)
+    firstname = models.CharField(max_length=50, null=False, verbose_name="Prénom")
+    lastname = models.CharField(max_length=50, null=False, verbose_name="Nom")
+    date_of_birth = models.DateField(null=False, verbose_name="Date de naissance")
+    country = models.CharField(max_length=75, null=False, verbose_name="Pays")
+
+    class Meta:
+        verbose_name ="Utilisateur"
+        verbose_name_plural ="Utilisateurs"
 
     def __str__(self) -> str: 
         return f'{self.lastname} {self.firstname}'
     
 
 class Customer(User):
-    email = models.EmailField(unique=True, max_length=100, null=False)
-    password = models.CharField(max_length=50, null=False)
-    phone = PhoneNumberField()
-    auth_token = models.CharField(unique=True, max_length=250, null=False)
+    email = models.EmailField(unique=True, max_length=100, null=False, verbose_name="E-mail")
+    password = models.CharField(max_length=50, null=False, verbose_name="Mot de passe")
+    phone = PhoneNumberField(verbose_name="Numéro de téléphone")
+    auth_token = models.CharField(unique=True, max_length=250, null=False, verbose_name="Clé d'authentification")
 
-    def __str__(self) -> str:
-        return f'{self.email}'
+    class Meta:
+        verbose_name ="Client"
+        verbose_name_plural ="Clients"
 
 
 class Cart(models.Model):
     id_cart = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    cart_validation_date = models.DateTimeField(null=False, auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    cart_validation_date = models.DateTimeField(null=False, auto_now_add=True, verbose_name="Date d'achat")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Client")
+
+    class Meta:
+        verbose_name ="Commande"
+        verbose_name_plural ="Commandes"
 
     def __str__(self) -> str:
-        return f'{self.cart_validation_date}'
+        return f'{self.user} - {self.cart_validation_date.strftime("%d/%m/%Y à %H:%M:%S")}'
     
 
 class UserOffer(models.Model):
     id_user_offer = models.SmallAutoField(primary_key=True, null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null =False)
-    is_a_child = models.BooleanField(default=False)
-    child_discount = models.DecimalField(max_digits=4, decimal_places=2, null=False, validators=[MinValueValidator(0)])
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null =False, verbose_name="Offre")
+    is_a_child = models.BooleanField(default=False, verbose_name="Est-ce un enfant ?")
+    child_discount = models.DecimalField(max_digits=4, decimal_places=2, default=0.05, verbose_name="Réduction enfant", validators=[MinValueValidator(0)])
 
     class Meta:
         constraints = [
         models.UniqueConstraint(fields=['user', 'offer'], name='unique_user_offer')
         ]
+        verbose_name ="Tarif spécial"
+        verbose_name_plural ="Tarifs spéciaux"
+
+    def __str__(self) -> str:
+        return f'{self.user}'
 
 
 class Event(models.Model):
     id_event = models.SmallAutoField(primary_key=True, null=False)
-    sport_name = models.CharField(max_length=30, null=False)
-    location = models.CharField(max_length=50, null=False)
-    start_date = models.DateTimeField(null=False)
-    end_date = models.DateTimeField(null=False)
+    sport_name = models.CharField(max_length=30, null=False, verbose_name="Épreuve")
+    location = models.CharField(max_length=50, null=False, verbose_name="Lieu")
+    start_date = models.DateTimeField(null=False, verbose_name="Date de début")
+    end_date = models.DateTimeField(null=False, verbose_name="Date de fin")
     description = models.CharField(max_length=250, null=False)
-    price = models.DecimalField(max_digits=5, decimal_places=2, null=False, validators=[MinValueValidator(0)])                       
+    price = models.DecimalField(max_digits=5, decimal_places=2, null=False, verbose_name="Tarif", validators=[MinValueValidator(0)])                       
+
+    class Meta:
+        verbose_name ="Évènement"
+        verbose_name_plural ="Évènements"
 
     def __str__(self) -> str:
         return f'{self.sport_name}'
@@ -75,11 +96,15 @@ class Event(models.Model):
     
 class Ticket(models.Model):
     id_ticket = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    buying_token = models.CharField(unique=True, max_length=250, null=False)
-    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=False)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=False)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False)
+    buying_token = models.CharField(unique=True, max_length=250, null=False, verbose_name="Clé d'achat")
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=False, verbose_name="Offre")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=False, verbose_name="Épreuve")
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False, verbose_name="Commande")
+
+    class Meta:
+        verbose_name ="Ticket"
+        verbose_name_plural ="Tickets"
 
     def __str__(self) -> str:
-        return f'{self.id_ticket}'
+        return f'{self.cart} - {self.event}'
 
