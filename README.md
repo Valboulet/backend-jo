@@ -5,8 +5,9 @@ Il s'agit de la partie back-end de l'application web de billetterie des Jeux Oly
 ## Pré-requis
 
 Pour l'application web :
-[Python 3.12.4](https://www.python.org/downloads/)
-[MySQL 8.1.0](https://dev.mysql.com/doc/relnotes/mysql/8.1/en/)
+
+- [Python 3.12.4](https://www.python.org/downloads/)
+- [MySQL 8.1.0](https://dev.mysql.com/doc/relnotes/mysql/8.1/en/)
 
 ## Installation en local
 
