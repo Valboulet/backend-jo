@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator, MinValueValidator
+from .utils import convertToParisTZ
 
 
 class Offer(models.Model):
@@ -56,8 +57,9 @@ class Cart(models.Model):
         verbose_name_plural ="Commandes"
 
     def __str__(self) -> str:
-        return f'{self.user} - {self.cart_validation_date.strftime("%d/%m/%Y à %H:%M:%S")}'
-    
+        date_purchase = convertToParisTZ(self.cart_validation_date).strftime("%d/%m/%Y | %H:%M:%S")
+        return f'{self.user} | {date_purchase}'    
+
 
 class UserOffer(models.Model):
     id_user_offer = models.SmallAutoField(primary_key=True, null=False)
@@ -91,20 +93,22 @@ class Event(models.Model):
         verbose_name_plural ="Évènements"
 
     def __str__(self) -> str:
-        return f'{self.sport_name}'
+        date_start = convertToParisTZ(self.start_date).strftime("%d/%m/%Y | %H:%M")
+        date_end = convertToParisTZ(self.end_date).strftime("%H:%M")
+        return f'{(self.sport_name).upper()} | {date_start} - {date_end}'
     
     
 class Ticket(models.Model):
     id_ticket = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    buying_token = models.CharField(unique=True, max_length=250, null=False, verbose_name="Clé d'achat")
-    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=False, verbose_name="Offre")
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=False, verbose_name="Épreuve")
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False, verbose_name="Commande")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=False, verbose_name="Épreuve")
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=False, verbose_name="Offre")
+    buying_token = models.CharField(unique=True, max_length=250, null=False, verbose_name="Clé d'achat")
 
     class Meta:
         verbose_name ="Ticket"
         verbose_name_plural ="Tickets"
 
     def __str__(self) -> str:
-        return f'{self.cart} - {self.event}'
+        return f'{self.cart} | {self.event}'
 
