@@ -1,6 +1,11 @@
+from datetime import datetime
 from django.contrib import admin
+from .models import User, Customer, UserOffer, Cart, Ticket, Offer, Event
 
-from backoffice.models import User, Customer, UserOffer, Cart, Ticket, Offer, Event
+# Customize admin interface
+admin.site.site_header = "JO Paris 2024 - Admin"
+admin.site.site_title = "JO Paris 2024 - Admin"
+admin.site.index_title = "Bienvenue dans votre espace d'administration"
 
 
 @admin.register(Offer)
@@ -11,13 +16,23 @@ class OfferAdmin(admin.ModelAdmin):
 
 @admin.register(UserOffer)
 class UserOfferAdmin(admin.ModelAdmin):
-    list_display = ("user", "offer", "is_a_child", "child_discount")
+    list_display = ("user", "offer", "child_discount")
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("lastname", "firstname", "date_of_birth", "country")
+    list_display = ("lastname", "firstname", "date_of_birth", "isAChild", "country")
     ordering = ("lastname", "country")
+
+    def isAChild(self, obj) -> str:
+        age = datetime.now().year - obj.date_of_birth.year
+
+        if(age <= 12):
+            return "Oui"
+        else:
+            return "Non"
+        
+    isAChild.short_description = "Tarif Enfant"
 
 
 @admin.register(Event)

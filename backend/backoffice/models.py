@@ -65,8 +65,7 @@ class UserOffer(models.Model):
     id_user_offer = models.SmallAutoField(primary_key=True, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null =False, verbose_name="Offre")
-    is_a_child = models.BooleanField(default=False, verbose_name="Est-ce un enfant ?")
-    child_discount = models.DecimalField(max_digits=4, decimal_places=2, default=0.05, verbose_name="Réduction enfant", validators=[MinValueValidator(0)])
+    child_discount = models.DecimalField(max_digits=4, decimal_places=2, default=0, verbose_name="Réduction enfant", validators=[MinValueValidator(0)])
 
     class Meta:
         constraints = [
