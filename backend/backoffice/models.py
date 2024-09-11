@@ -6,6 +6,9 @@ from .utils import convertToParisTZ
 
 
 class Offer(models.Model):
+    """
+    The Offer table containing all offers items
+    """
     id_offer = models.SmallAutoField(primary_key=True, null=False)
     offer_name = models.CharField(max_length=10, null=False, verbose_name="Nom de l'offre")
     number_of_seats = models.SmallIntegerField(null=False, verbose_name="Nombre de places",
@@ -37,6 +40,9 @@ class User(models.Model):
     
 
 class Customer(User):
+    """
+    The Customer table inherits from User table
+    """
     email = models.EmailField(unique=True, max_length=100, null=False, verbose_name="E-mail")
     password = models.CharField(max_length=50, null=False, verbose_name="Mot de passe")
     phone = PhoneNumberField(verbose_name="Numéro de téléphone")
@@ -48,6 +54,9 @@ class Customer(User):
 
 
 class Cart(models.Model):
+    """
+    The Cart table contains bookings
+    """
     id_cart = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     cart_validation_date = models.DateTimeField(null=False, auto_now_add=True, verbose_name="Date d'achat")
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Client")
@@ -62,6 +71,9 @@ class Cart(models.Model):
 
 
 class UserOffer(models.Model):
+    """
+    The UserOffer table is an association table between User and Offer
+    """
     id_user_offer = models.SmallAutoField(primary_key=True, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null =False, verbose_name="Offre")
