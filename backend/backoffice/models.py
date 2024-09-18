@@ -1,5 +1,8 @@
 import uuid
+
 from django.db import models
+from django.conf import settings
+
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .utils import convertToParisTZ
@@ -88,17 +91,51 @@ class UserOffer(models.Model):
 
     def __str__(self) -> str:
         return f'{self.user}'
+    
+
+
+class Sport(models.Model):
+    id_sport = models.SmallAutoField(primary_key=True, null=False)
+    name = models.CharField(max_length=30, null=False, verbose_name="Sport")
+    pictogram = models.ImageField(upload_to='uploads/sports', verbose_name='Image')
+
+    class Meta:
+        verbose_name ="Sport"
+        verbose_name_plural ="Sports"
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+    def pictogram_url(self):
+        """
+        This function returns the image URL concatenated with the website URL in settings.py
+        """
+        return f'{settings.WEBSITE_URL}{self.pictogram.url}'
+    
+
+class Location(models.Model):
+    id_location = models.SmallAutoField(primary_key=True, null=False)
+    name = models.CharField(max_length=50, null=False, verbose_name="Lieu")
+    image = models.ImageField(upload_to='uploads/locations', verbose_name='Image')
+
+    class Meta:
+        verbose_name ="Lieu"
+        verbose_name_plural ="Lieux"
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
 
 
 class Event(models.Model):
     id_event = models.SmallAutoField(primary_key=True, null=False)
-    sport_name = models.CharField(max_length=30, null=False, verbose_name="Épreuve")
-    location = models.CharField(max_length=50, null=False, verbose_name="Lieu")
+    sport = models.ForeignKey(Sport, on_delete=models.CASCADE, null=False, verbose_name="Sport")
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=False, verbose_name="Lieu")
     start_date = models.DateTimeField(null=False, verbose_name="Date de début")
     end_date = models.DateTimeField(null=False, verbose_name="Date de fin")
     description = models.CharField(max_length=250, null=False)
-    price = models.DecimalField(max_digits=5, decimal_places=2, null=False, verbose_name="Tarif", validators=[MinValueValidator(0)])                       
-
+    price = models.DecimalField(max_digits=5, decimal_places=2, null=False, verbose_name="Tarif", validators=[MinValueValidator(0)])
+                    
     class Meta:
         verbose_name ="Évènement"
         verbose_name_plural ="Évènements"
@@ -106,8 +143,9 @@ class Event(models.Model):
     def __str__(self) -> str:
         date_start = convertToParisTZ(self.start_date).strftime("%d/%m/%Y | %H:%M")
         date_end = convertToParisTZ(self.end_date).strftime("%H:%M")
-        return f'{(self.sport_name).upper()} | {date_start} - {date_end}'
+        return f'{(self.sport).upper()} | {date_start} - {date_end}'
     
+
     
 class Ticket(models.Model):
     id_ticket = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

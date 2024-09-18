@@ -1,9 +1,13 @@
 from rest_framework import serializers
-from .models import Event
+from .models import Sport
 
 
-class EventSerializer(serializers.ModelSerializer):
+class SportSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Event
-        fields = ["sport_name", "location", "start_date", "end_date", "description", "price"]
+        model = Sport
+        fields = [
+            "id_sport",
+            "name", 
+            "pictogram_url", 
+        ]
