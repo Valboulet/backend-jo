@@ -8,10 +8,11 @@ from backend.settings import base
 def main():
     """Run administrative tasks."""
 
-    if base.DEBUG:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.local')
-    else:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.production')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.base')
+    # if base.DEBUG:
+    #     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.local')
+    # else:
+    #     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.production')
 
 
     try:

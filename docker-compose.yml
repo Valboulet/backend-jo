@@ -12,12 +12,12 @@ services:
       - db
 
   db:
-    image: mysql
+    image: postgres:16
 
     env_file:
       - ./.env.dev
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
 
 volumes:
   db_data:
