@@ -24,4 +24,4 @@ Si nécessaire, crée un fichier .env contenant les variables requises ou modifi
 
 ## Plus d'infos
 
-Pour aller plus loin, consulter la [documentation technique](https://docs.google.com/document/d/1lJJrcU4AEWluQYuCGQyfmgfqALlbRAofXUnExvlUgWM/pub) du projet.
+Pour aller plus loin, consulter la [documentation technique](https://lively-quality-3f6.notion.site/Bloc-3-Studi-Examen-10b0cf88bc12807482ebf115edf7458e) du projet.
