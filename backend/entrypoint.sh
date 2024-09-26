@@ -11,6 +11,7 @@ if [ "$DATABASE" = "jo2024" ]; then
 fi
 
 # Apply migrations
+python manage.py makemigrations
 python manage.py migrate
 
 # Execute the command passed as arguments (like `runserver`)

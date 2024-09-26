@@ -4,8 +4,8 @@ FROM python:3.12.4-alpine
 WORKDIR /app/backend-jo
 
 # Prevent the creation of .pyc files and set Python to be non-buffered
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONBUFFERED=1
 
 # Install necessary dependencies
 RUN apk update && apk add --no-cache bash netcat-openbsd
