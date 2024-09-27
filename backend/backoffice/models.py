@@ -108,7 +108,7 @@ class Sport(models.Model):
 
     def pictogram_url(self):
         """
-        This function returns the image URL concatenated with the website URL in settings.py
+        This function returns the pictogram URL concatenated with the website URL in settings.base.py
         """
         return f'{settings.WEBSITE_URL}{self.pictogram.url}'
     
@@ -124,6 +124,13 @@ class Location(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name}'
+    
+    def image_url(self):
+        """
+        This function returns the image URL concatenated with the website URL in settings.base.py
+        """
+        return f'{settings.WEBSITE_URL}{self.image.url}'
+
 
 
 
