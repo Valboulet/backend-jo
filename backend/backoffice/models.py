@@ -150,10 +150,20 @@ class Event(models.Model):
     def __str__(self) -> str:
         date_start = convertToParisTZ(self.start_date).strftime("%d/%m/%Y | %H:%M")
         date_end = convertToParisTZ(self.end_date).strftime("%H:%M")
-        return f'{(self.sport).upper()} | {date_start} - {date_end}'
+        return f'{(self.sport)} | {date_start} - {date_end}'
     
 
+    """
+    Theses functions return the start and end formated to show in API
+    """
+    def date_start(self):
+        return f'{convertToParisTZ(self.start_date).strftime("%d/%m/%Y | %H:%M")}'
+
+    def date_end(self):
+        return f'{convertToParisTZ(self.end_date).strftime("%H:%M")}'
+
     
+
 class Ticket(models.Model):
     id_ticket = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False, verbose_name="Commande")

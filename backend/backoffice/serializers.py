@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Sport
+from .models import Location, Sport, Event
 
 
 class SportSerializer(serializers.ModelSerializer):
@@ -8,7 +8,8 @@ class SportSerializer(serializers.ModelSerializer):
         model = Sport
         fields = [
             "id_sport",
-            "name", 
+            "name",
+            "pictogram" ,
             "pictogram_url", 
         ]
 
@@ -21,4 +22,19 @@ class LocationSerializer(serializers.ModelSerializer):
             "id_location",
             "name", 
             "image_url", 
+        ]
+
+
+class EventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Event
+        fields = [
+            "id_event",
+            "sport", 
+            "location",
+            "date_start",
+            "date_end",
+            "description",
+            "price", 
         ]
