@@ -35,6 +35,6 @@ class EventSerializer(serializers.ModelSerializer):
             "location",
             "date_start",
             "date_end",
-            "description",
+            "event_description",
             "price", 
         ]

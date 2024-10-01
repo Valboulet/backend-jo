@@ -5,7 +5,7 @@ from django.conf import settings
 
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator, MinValueValidator
-from .utils import convertToParisTZ
+from .utils import convertToParisTZ, splitDescriptionInPieces
 
 
 class Offer(models.Model):
@@ -162,7 +162,13 @@ class Event(models.Model):
     def date_end(self):
         return f'{convertToParisTZ(self.end_date).strftime("%H:%M")}'
 
+    """
+    Return splited description
+    """
+    def event_description(self):
+        return f'{splitDescriptionInPieces(self.description)}' 
     
+
 
 class Ticket(models.Model):
     id_ticket = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
