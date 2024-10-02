@@ -2,8 +2,8 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, permission_classes
 
-from .models import Location, Sport, Event
-from .serializers import LocationSerializer, SportSerializer, EventSerializer
+from .models import Location, Sport, Event, Offer
+from .serializers import LocationSerializer, SportSerializer, EventSerializer, OfferSerializer
 
 
 @api_view(['GET'])
@@ -42,6 +42,20 @@ def events_list(request):
     """
     events = Event.objects.all()
     serializer = EventSerializer(events, many=True)
+
+    return JsonResponse({
+        'data': serializer.data
+    })
+
+
+@api_view(['GET'])
+@permission_classes([])
+def offers_list(request):
+    """
+    Returns the offers list in api
+    """
+    offers = Offer.objects.all()
+    serializer = OfferSerializer(offers, many=True)
 
     return JsonResponse({
         'data': serializer.data

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Sport, Event
+from .models import Location, Sport, Event, Offer
 
 
 class SportSerializer(serializers.ModelSerializer):
@@ -47,3 +47,15 @@ class EventSerializer(serializers.ModelSerializer):
     def get_event_description(self, obj):
         """Split the event description string into a list."""
         return [desc.strip() for desc in obj.description.split('|')]  # Split by '|' and trim whitespace
+
+
+class OfferSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id_offer",
+            "offer_name", 
+            "number_of_seats",
+            "discount" 
+        ]
