@@ -26,15 +26,24 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    """Serializer for Event model, transforming event data for API output."""
+    
+    sport = serializers.CharField(source='sport.name', read_only=True)  # Read-only sport name
+    location = serializers.CharField(source='location.name', read_only=True)  # Read-only location name
+    event_description = serializers.SerializerMethodField()  # Custom method for event descriptions
 
     class Meta:
         model = Event
         fields = [
             "id_event",
-            "sport", 
+            "sport",
             "location",
             "date_start",
             "date_end",
             "event_description",
-            "price", 
+            "price",
         ]
+
+    def get_event_description(self, obj):
+        """Split the event description string into a list."""
+        return [desc.strip() for desc in obj.description.split('|')]  # Split by '|' and trim whitespace

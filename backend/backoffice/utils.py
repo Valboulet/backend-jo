@@ -12,6 +12,3 @@ def convertToParisTZ(date: datetime) -> datetime:
     return date.astimezone(paris_tz)
 
 
-
-def splitDescriptionInPieces(description) -> list:
-    return description.split(" | ")
