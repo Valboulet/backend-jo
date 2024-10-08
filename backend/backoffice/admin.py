@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.contrib import admin
-from .models import User, Customer, UserOffer, Cart, Ticket, Offer, Event, Sport, Location
+from .models import User, Customer, UserTicket, Cart, Ticket, Offer, Event, Sport, Location
 
 # Customize admin interface
 admin.site.site_header = "JO Paris 2024 - Admin"
@@ -14,9 +14,9 @@ class OfferAdmin(admin.ModelAdmin):
     ordering = ("number_of_seats",)
 
 
-@admin.register(UserOffer)
-class UserOfferAdmin(admin.ModelAdmin):
-    list_display = ("user", "offer", "child_discount")
+@admin.register(UserTicket)
+class UserTicketAdmin(admin.ModelAdmin):
+    list_display = ("user", "ticket")
 
 
 @admin.register(User)

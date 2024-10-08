@@ -71,26 +71,6 @@ class Cart(models.Model):
     def __str__(self) -> str:
         date_purchase = convertToParisTZ(self.cart_validation_date).strftime("%d/%m/%Y | %H:%M:%S")
         return f'{self.user} | {date_purchase}'    
-
-
-class UserOffer(models.Model):
-    """
-    The UserOffer table is an association table between User and Offer
-    """
-    id_user_offer = models.SmallAutoField(primary_key=True, null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
-    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null =False, verbose_name="Offre")
-    child_discount = models.DecimalField(max_digits=4, decimal_places=2, default=0, verbose_name="Réduction enfant", validators=[MinValueValidator(0)])
-
-    class Meta:
-        constraints = [
-        models.UniqueConstraint(fields=['user', 'offer'], name='unique_user_offer')
-        ]
-        verbose_name ="Tarif spécial"
-        verbose_name_plural ="Tarifs spéciaux"
-
-    def __str__(self) -> str:
-        return f'{self.user}'
     
 
 
@@ -178,3 +158,22 @@ class Ticket(models.Model):
     def __str__(self) -> str:
         return f'{self.cart} | {self.event}'
 
+
+
+class UserTicket(models.Model):
+    """
+    The UserTicket table is an association table between User and Ticket
+    """
+    id_user_ticket = models.SmallAutoField(primary_key=True, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, null =False, verbose_name="Ticket")
+
+    class Meta:
+        constraints = [
+        models.UniqueConstraint(fields=['user', 'ticket'], name='unique_user_ticket')
+        ]
+        verbose_name ="Utilisateur"
+        verbose_name_plural ="Utilisateurs"
+
+    def __str__(self) -> str:
+        return f'{self.ticket}'
