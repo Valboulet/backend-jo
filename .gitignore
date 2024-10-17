@@ -49,6 +49,11 @@ MANIFEST
 *.manifest
 *.spec
 
+#Docker Files
+docker-compose.prod.yml
+docker_compose.yml
+Dockerfile
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

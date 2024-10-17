@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
@@ -9,7 +8,6 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -47,7 +45,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -56,7 +53,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
-
 
 REST_AUTH = {
     "USE_JWT": True,
@@ -152,30 +148,37 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = 'backend.asgi.application'
 
-
-
 # Configuration des bases de données
-ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')  # 'local' par défaut si non défini
+DATABASES = {
+    'default': {
+        'ENGINE': os.environ.get('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.environ.get('POSTGRES_DB', 'local_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'local_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'local_password'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+    }
+}
 
-if ENVIRONMENT == 'production':
-    # Utilisation de dj_database_url pour Railway
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL')
-        )
-    }
-else:
-    # Configuration locale
-    DATABASES = {
-        'default': {
-            'ENGINE': os.environ.get('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
-            'NAME': os.environ.get('POSTGRES_DB', 'local_db'),
-            'USER': os.environ.get('POSTGRES_USER', 'local_user'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'local_password'),
-            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-        }
-    }
+
+ENVIRONMENT = os.environ.get('ENVIRONEMENT')
+POSTGRES_LOCALLY = False
+if ENVIRONMENT == 'production'or POSTGRES_LOCALLY == True:
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_PUBLIC_URL'))
+
+# else:
+#     # Configuration locale
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': os.environ.get('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
+#             'NAME': os.environ.get('POSTGRES_DB', 'local_db'),
+#             'USER': os.environ.get('POSTGRES_USER', 'local_user'),
+#             'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'local_password'),
+#             'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+#             'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+#         }
+#     }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -194,7 +197,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -205,7 +207,6 @@ TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -218,11 +219,3 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# REST_FRAMEWORK = {
-#     # Use Django's standard `django.contrib.auth` permissions,
-#     # or allow read-only access for unauthenticated users.
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-#     ]
-# }
