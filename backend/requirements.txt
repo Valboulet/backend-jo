@@ -8,6 +8,8 @@ charset-normalizer==3.4.0
 constantly==23.10.4
 cryptography==43.0.1
 daphne==4.1.2
+dj-database-url==2.2.0
+dj-rest-auth==6.0.0
 Django==5.1.2
 django-admin-interface==0.28.9
 django-allauth==65.0.2
@@ -16,6 +18,7 @@ django-cors-headers==4.4.0
 django-phonenumber-field==8.0.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
+gunicorn==23.0.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
