@@ -1,5 +1,2 @@
-[build]
-builder = "python"
-
 [build.args]
 dir = "backend"
