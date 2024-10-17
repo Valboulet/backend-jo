@@ -25,6 +25,12 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backjo2024.up.railway.app', ]
 
 SITE_ID = 1
 
+# Récupérer l'URL du site
+WEBSITE_URL = os.environ.get("WEBSITE_URL")
+
+# Optionnel : définir une valeur par défaut si la variable n'est pas trouvée
+if not WEBSITE_URL:
+    WEBSITE_URL = 'http://localhost:8000'   
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
@@ -157,7 +163,7 @@ DATABASES = {
 
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
-POSTGRES_LOCALLY = True
+POSTGRES_LOCALLY = False
 if ENVIRONMENT == 'production'or POSTGRES_LOCALLY == True:
     DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
 
