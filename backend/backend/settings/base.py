@@ -20,7 +20,8 @@ DEBUG = os.environ.get("DEBUG", default=False)
 
 AUTH_USER_MODEL = "backoffice.User"
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backjo2024.up.railway.app', ]
 
 SITE_ID = 1
 
@@ -67,22 +68,19 @@ AUTHENTICATION_BACKENDS = (
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:3000",
-    "http://164.90.207.193",
-    "http://164.90.207.193:1337"
+    "http://backjo2024.up.railway.app"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:3000",
-    "http://164.90.207.193",
-    "http://164.90.207.193:1337"
+    "https://backjo2024.up.railway.app"
 ]
 
 CORS_ORIGINS_WHITELIST = [
     "http://localhost:8000",
     "http://localhost:3000",
-    "http://164.90.207.193",
-    "http://164.90.207.193:1337"
+    "https://backjo2024.up.railway.app"
 ]
 
 # Application definition
