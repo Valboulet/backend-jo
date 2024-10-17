@@ -155,10 +155,10 @@ DATABASES = {
 }
 
 
-ENVIRONMENT = os.environ.get('ENVIRONEMENT')
+ENVIRONMENT = os.environ.get('ENVIRONMENT')
 POSTGRES_LOCALLY = False
 if ENVIRONMENT == 'production'or POSTGRES_LOCALLY == True:
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_PUBLIC_URL'))
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
 
 # else:
 #     # Configuration locale
