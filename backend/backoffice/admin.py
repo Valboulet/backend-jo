@@ -1,38 +1,25 @@
-from datetime import datetime
 from django.contrib import admin
-from .models import User, Customer, UserTicket, Cart, Ticket, Offer, Event, Sport, Location
+from django.utils.html import format_html
+from django.urls import reverse
+from .models import Spectator, User, SpectatorTicket, Cart, Ticket, Offer, Event, Sport, Location
 
-# Customize admin interface
+# Personnalisation de l'interface d'administration
 admin.site.site_header = "JO Paris 2024 - Admin"
 admin.site.site_title = "JO Paris 2024 - Admin"
 admin.site.index_title = "Bienvenue dans votre espace d'administration"
 
 
+# Configuration de l'administration pour les modèles
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
     list_display = ("offer_name", "number_of_seats", "discount")
     ordering = ("number_of_seats",)
 
 
-@admin.register(UserTicket)
-class UserTicketAdmin(admin.ModelAdmin):
-    list_display = ("user", "ticket")
-
-
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ("lastname", "firstname", "date_of_birth", "isAChild", "country")
+@admin.register(Spectator)
+class SpectatorAdmin(admin.ModelAdmin):
+    list_display = ("lastname", "firstname", "date_of_birth", "country")
     ordering = ("lastname", "country")
-
-    def isAChild(self, obj) -> str:
-        age = datetime.now().year - obj.date_of_birth.year
-
-        if(age <= 12):
-            return "Oui"
-        else:
-            return "Non"
-        
-    isAChild.short_description = "Tarif Enfant"
 
 
 @admin.register(Sport)
@@ -54,23 +41,84 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ("location", "sport")
 
 
-@admin.register(Customer)
-class CustomerAdmin(admin.ModelAdmin):
-    list_display = ("lastname", "firstname", "email")
-    ordering = ("lastname",)
+class TicketInline(admin.TabularInline):
+    model = Ticket
+    extra = 0
+    readonly_fields = ('buying_key', 'event', 'offer')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False  # Désactiver la possibilité d'ajouter des tickets depuis l'inline
+
+    def has_change_permission(self, request, obj=None):
+        return False  # Désactiver la possibilité de modifier les tickets depuis l'inline
+
+
+class CartInline(admin.TabularInline):
+    model = Cart
+    extra = 0
+    readonly_fields = ('cart_validation_date',)
+    can_delete = False
+    inlines = [TicketInline]
+
+    def tickets_list(self, obj):
+        # Liste tous les tickets associés à la commande avec leurs clés d'achat
+        tickets = Ticket.objects.filter(cart=obj)
+        if tickets.exists():
+            ticket_details = [
+                format_html('<li>{} - Clé: {}</li>', ticket.event, ticket.buying_key)
+                for ticket in tickets
+            ]
+            return format_html("<ul>{}</ul>", format_html("".join(ticket_details)))
+        else:
+            return "Pas de tickets"
+
+    tickets_list.short_description = "Tickets associés"
+
+
+# Administration du modèle User avec les commandes visibles et cliquables
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('email', 'firstname', 'lastname', 'list_carts')  # Ajout des commandes visibles
+    inlines = [CartInline]  # Affichage des Carts et Tickets associés dans la vue détaillée
+
+    def list_carts(self, obj):
+        # Récupérer toutes les commandes (Carts) associées à l'utilisateur
+        carts = Cart.objects.filter(spectator=obj)
+
+        # Générer un lien cliquable pour chaque Cart
+        cart_links = [
+            format_html('<a href="{}">{}</a>', reverse('admin:backoffice_cart_change', args=[cart.id_cart]), cart)
+            for cart in carts
+        ]
+
+        # Retourner la liste des liens séparés par une virgule
+        return format_html(", ".join(cart_links)) if cart_links else "Pas de commandes"
+
+    list_carts.short_description = 'Commandes'  # Nom de la colonne
 
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("event", "offer", "cart")
-
-
-class CartInline(admin.TabularInline):
-    model = Ticket
-    extra = 0
+    list_display = ("event", "offer", "cart", "buying_key")
 
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ("cart_validation_date", "user")
-    inlines = (CartInline,)
+    list_display = ("cart_validation_date", "spectator")
+    inlines = [TicketInline]  # Affichage des Tickets associés dans la Cart
+
+
+@admin.register(SpectatorTicket)
+class SpectatorTicketAdmin(admin.ModelAdmin):
+    list_display = ('spectator', 'ticket', 'auth_key_display', 'buying_key_display')
+
+    def auth_key_display(self, obj):
+        # Vérifier si le Spectator a un User pour accéder à l'auth_key
+        return obj.spectator.user.auth_key if hasattr(obj.spectator, 'user') else "N/A"
+
+    def buying_key_display(self, obj):
+        return obj.ticket.buying_key
+
+    auth_key_display.short_description = 'Clé d\'authentification'
+    buying_key_display.short_description = 'Clé d\'achat'

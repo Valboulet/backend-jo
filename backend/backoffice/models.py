@@ -2,9 +2,11 @@ import uuid
 
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 from .utils import convertToParisTZ
 
 
@@ -25,44 +27,116 @@ class Offer(models.Model):
 
     def __str__(self) -> str:
         return f'{self.offer_name}'
+
+
+class CustomUserManager(UserManager):
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("Vous devez spécifier une adresse e-mail valide")
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self.db)
+
+        return user
+
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
     
 
-class User(models.Model):
-    id_user = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    def create_superuser(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self._create_user(email, password, **extra_fields)
+    
+
+
+# class User(AbstractBaseUser, PermissionsMixin):
+#     id_user = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     email = models.EmailField(unique=True, max_length=100, null=False, verbose_name="E-mail")
+#     firstname = models.CharField(max_length=50, null=False, verbose_name="Prénom")
+#     lastname = models.CharField(max_length=50, null=False, verbose_name="Nom")
+#     date_of_birth = models.DateField(default=timezone.now, null=False, verbose_name="Date de naissance")
+#     country = models.CharField(max_length=75, null=False, verbose_name="Pays")
+
+#     is_active = models.BooleanField(default=True)
+#     is_superuser = models.BooleanField(default=False)
+#     is_staff = models.BooleanField(default=False)
+
+#     date_joined = models.DateTimeField(default=timezone.now, null=False, verbose_name='Date de création')
+#     last_login = models.DateTimeField(blank=True, null=True)
+
+#     objects = CustomUserManager()
+
+#     USERNAME_FIELD = 'email'
+#     EMAIL_FIELD = 'email'
+#     REQUIRED_FIELDS = []
+
+
+#     class Meta:
+#         verbose_name ="Utilisateur"
+#         verbose_name_plural ="Utilisateurs"
+
+#     def __str__(self) -> str: 
+#         return f'{self.lastname} {self.firstname}'
+
+
+
+class Spectator(models.Model):
+    id_spectator = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     firstname = models.CharField(max_length=50, null=False, verbose_name="Prénom")
     lastname = models.CharField(max_length=50, null=False, verbose_name="Nom")
     date_of_birth = models.DateField(null=False, verbose_name="Date de naissance")
     country = models.CharField(max_length=75, null=False, verbose_name="Pays")
 
     class Meta:
-        verbose_name ="Utilisateur"
-        verbose_name_plural ="Utilisateurs"
+        verbose_name ="Spectateur"
+        verbose_name_plural ="Spectateurs"
 
     def __str__(self) -> str: 
         return f'{self.lastname} {self.firstname}'
     
 
-class Customer(User):
+
+class User(Spectator, AbstractBaseUser, PermissionsMixin):
     """
-    The Customer table inherits from User table
+    The Customer table inherits from Spectator table
     """
     email = models.EmailField(unique=True, max_length=100, null=False, verbose_name="E-mail")
-    password = models.CharField(max_length=50, null=False, verbose_name="Mot de passe")
     phone = PhoneNumberField(verbose_name="Numéro de téléphone")
-    auth_token = models.CharField(unique=True, max_length=250, null=False, verbose_name="Clé d'authentification")
+    auth_key = models.UUIDField(default=uuid.uuid4, verbose_name="Clé d'authentification")
+
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+
+    date_joined = models.DateTimeField(default=timezone.now, null=False, verbose_name='Date de création')
+    last_login = models.DateTimeField(blank=True, null=True)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['firstname', 'lastname', 'date_of_birth', 'country', 'phone',]
 
     class Meta:
         verbose_name ="Client"
         verbose_name_plural ="Clients"
 
 
+
+
 class Cart(models.Model):
     """
-    The Cart table contains bookings
+    The Cart table contains tickets
     """
     id_cart = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     cart_validation_date = models.DateTimeField(null=False, auto_now_add=True, verbose_name="Date d'achat")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Client")
+    spectator = models.ForeignKey(Spectator, on_delete=models.CASCADE, null=False, verbose_name="Client")
 
     class Meta:
         verbose_name ="Commande"
@@ -70,7 +144,7 @@ class Cart(models.Model):
 
     def __str__(self) -> str:
         date_purchase = convertToParisTZ(self.cart_validation_date).strftime("%d/%m/%Y | %H:%M:%S")
-        return f'{self.user} | {date_purchase}'    
+        return f'{self.spectator} | {date_purchase}'    
     
 
 
@@ -149,7 +223,7 @@ class Ticket(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False, verbose_name="Commande")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, null=False, verbose_name="Épreuve")
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=False, verbose_name="Offre")
-    buying_token = models.CharField(unique=True, max_length=250, null=False, verbose_name="Clé d'achat")
+    buying_key = models.UUIDField(default=uuid.uuid4, verbose_name="Clé d'achat")
 
     class Meta:
         verbose_name ="Ticket"
@@ -160,20 +234,20 @@ class Ticket(models.Model):
 
 
 
-class UserTicket(models.Model):
+class SpectatorTicket(models.Model):
     """
-    The UserTicket table is an association table between User and Ticket
+    The SpectatorTicket table is an association table between Spectator and Ticket
     """
-    id_user_ticket = models.SmallAutoField(primary_key=True, null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
+    id_spectator_ticket = models.SmallAutoField(primary_key=True, null=False)
+    spectator = models.ForeignKey(Spectator, on_delete=models.CASCADE, null=False, verbose_name="Utilisateur")
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, null =False, verbose_name="Ticket")
 
     class Meta:
         constraints = [
-        models.UniqueConstraint(fields=['user', 'ticket'], name='unique_user_ticket')
+        models.UniqueConstraint(fields=['spectator', 'ticket'], name='unique_spectator_ticket')
         ]
-        verbose_name ="Utilisateur"
-        verbose_name_plural ="Utilisateurs"
+        verbose_name ="Spectateur | Ticket"
+        verbose_name_plural ="Spectateurs | Tickets"
 
     def __str__(self) -> str:
         return f'{self.ticket}'

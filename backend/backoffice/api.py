@@ -1,12 +1,13 @@
 from django.http import JsonResponse
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 from .models import Location, Sport, Event, Offer
 from .serializers import LocationSerializer, SportSerializer, EventSerializer, OfferSerializer
 
 
 @api_view(['GET'])
+@authentication_classes([])
 @permission_classes([])
 def sports_list(request):
     """
@@ -21,6 +22,7 @@ def sports_list(request):
 
 
 @api_view(['GET'])
+@authentication_classes([])
 @permission_classes([])
 def locations_list(request):
     """
@@ -35,6 +37,7 @@ def locations_list(request):
 
 
 @api_view(['GET'])
+@authentication_classes([])
 @permission_classes([])
 def events_list(request):
     """
@@ -49,6 +52,7 @@ def events_list(request):
 
 
 @api_view(['GET'])
+@authentication_classes([])
 @permission_classes([])
 def offers_list(request):
     """

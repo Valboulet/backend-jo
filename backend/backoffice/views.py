@@ -1,9 +1,5 @@
-# from django.shortcuts import render
-# from rest_framework import generics
+from dj_rest_auth.registration.views import RegisterView
+from .serializers import CustomRegisterSerializer
 
-# from .models import Event
-# from .serializers import EventSerializer
-
-# class EventListView(generics.ListAPIView):
-#     queryset = Event.objects.all()
-#     serializer_class = EventSerializer
+class CustomRegisterView(RegisterView):
+    serializer_class = CustomRegisterSerializer
