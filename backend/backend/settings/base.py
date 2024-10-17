@@ -25,10 +25,6 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backjo2024.up.railway.app', ]
 
 SITE_ID = 1
 
-if DEBUG:
-    WEBSITE_URL = 'http://localhost:8000'
-else:
-    WEBSITE_URL = 'http://164.90.207.193:1337'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
