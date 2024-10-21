@@ -71,21 +71,21 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:3000",
     "http://backjo2024.up.railway.app",
-    "https://frontend-jo-production.up.railway.app"
+    "https://jo2024front.up.railway.app"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:3000",
     "https://backjo2024.up.railway.app",
-    "https://frontend-jo-production.up.railway.app"
+    "https://jo2024front.up.railway.app"
 ]
 
 CORS_ORIGINS_WHITELIST = [
     "http://localhost:8000",
     "http://localhost:3000",
     "https://backjo2024.up.railway.app",
-    "https://frontend-jo-production.up.railway.app"
+    "https://jo2024front.up.railway.app"
 ]
 
 # Application definition
