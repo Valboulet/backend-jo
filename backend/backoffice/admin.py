@@ -18,8 +18,8 @@ class OfferAdmin(admin.ModelAdmin):
 
 @admin.register(Spectator)
 class SpectatorAdmin(admin.ModelAdmin):
-    list_display = ("lastname", "firstname", "date_of_birth", "country")
-    ordering = ("lastname", "country")
+    list_display = ("last_name", "first_name", "date_of_birth", "country")
+    ordering = ("last_name", "country")
 
 
 @admin.register(Sport)
@@ -79,24 +79,7 @@ class CartInline(admin.TabularInline):
 # Administration du modèle User avec les commandes visibles et cliquables
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'firstname', 'lastname', 'list_carts')  # Ajout des commandes visibles
-    inlines = [CartInline]  # Affichage des Carts et Tickets associés dans la vue détaillée
-
-    def list_carts(self, obj):
-        # Récupérer toutes les commandes (Carts) associées à l'utilisateur
-        carts = Cart.objects.filter(spectator=obj)
-
-        # Générer un lien cliquable pour chaque Cart
-        cart_links = [
-            format_html('<a href="{}">{}</a>', reverse('admin:backoffice_cart_change', args=[cart.id_cart]), cart)
-            for cart in carts
-        ]
-
-        # Retourner la liste des liens séparés par une virgule
-        return format_html(", ".join(cart_links)) if cart_links else "Pas de commandes"
-
-    list_carts.short_description = 'Commandes'  # Nom de la colonne
-
+    list_display = ('email', 'first_name', 'last_name', "auth_key")
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
@@ -105,7 +88,7 @@ class TicketAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ("cart_validation_date", "spectator")
+    list_display = ("cart_validation_date", "user")
     inlines = [TicketInline]  # Affichage des Tickets associés dans la Cart
 
 

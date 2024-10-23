@@ -113,7 +113,6 @@ INSTALLED_APPS = [
 
     'corsheaders',
 
-    'phonenumber_field',
     'backoffice',
 ]
 
@@ -170,18 +169,6 @@ POSTGRES_LOCALLY = False
 if ENVIRONMENT == 'production'or POSTGRES_LOCALLY == True:
     DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
 
-# else:
-#     # Configuration locale
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': os.environ.get('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
-#             'NAME': os.environ.get('POSTGRES_DB', 'local_db'),
-#             'USER': os.environ.get('POSTGRES_USER', 'local_user'),
-#             'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'local_password'),
-#             'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-#             'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-#         }
-#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

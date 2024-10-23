@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from .models import Location, Sport, Event, Offer, User, Spectator 
+from .models import Location, Sport, Event, Offer, Spectator
 
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,35 +55,13 @@ class OfferSerializer(serializers.ModelSerializer):
 
 
 class CustomRegisterSerializer(RegisterSerializer):
-    # Déclaration des champs supplémentaires
-    date_of_birth = serializers.DateField(required=True)
-    firstname = serializers.CharField(max_length=50, required=True)
-    lastname = serializers.CharField(max_length=50, required=True)
-    country = serializers.CharField(max_length=75, required=True)
+    first_name = serializers.CharField(max_length=50, required=True)
+    last_name = serializers.CharField(max_length=50, required=True)
 
-    class Meta:
-        model = User  # Utilisez le modèle User pour l'enregistrement
-        fields = [
-            'email',
-            'password1',
-            'password2',
-            'date_of_birth',
-            'firstname',
-            'lastname',
-            'country',
-        ]
-
-    def create(self, validated_data):
-        # Créez l'utilisateur avec le serializer de base
-        user = super().create(validated_data)
-        
-        # Créez l'objet Spectator en utilisant les données validées
-        Spectator.objects.create(
-            id_spectator=user.id,
-            firstname=validated_data['firstname'],
-            lastname=validated_data['lastname'],
-            date_of_birth=validated_data['date_of_birth'],
-            country=validated_data['country'],
-        )
-        
-        return user
+    def get_cleaned_data(self):
+        data_dict = super().get_cleaned_data()
+        data_dict.update({
+            'first_name': self.validated_data.get('first_name', ''),
+            'last_name': self.validated_data.get('last_name', ''),
+        })
+        return data_dict
