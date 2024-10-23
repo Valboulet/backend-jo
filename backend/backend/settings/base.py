@@ -70,7 +70,7 @@ AUTHENTICATION_BACKENDS = (
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:3000",
-    "http://backjo2024.up.railway.app",
+    "https://backjo2024.up.railway.app",
     "https://jo2024front.up.railway.app"
 ]
 
