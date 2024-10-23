@@ -166,8 +166,8 @@ DATABASES = {
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
 POSTGRES_LOCALLY = False
-if ENVIRONMENT == 'production'or POSTGRES_LOCALLY == True:
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_PUBLIC_URL'))
+if ENVIRONMENT == 'production' or POSTGRES_LOCALLY == True:
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
 
 
 # Password validation
