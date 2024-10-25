@@ -1,11 +1,12 @@
+from django.urls import path
+from . import api
+
 from dj_rest_auth.jwt_auth import get_refresh_view
 # from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView, LogoutView
 from .views import CustomRegisterView
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from django.urls import path
-from . import api
 
 urlpatterns = [
     path('sports/', api.sports_list, name='api_sports_list'),
