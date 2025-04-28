@@ -26,7 +26,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backjo2024.up.railway.app', ]
 SITE_ID = 1
 
 # Récupérer l'URL du site
-WEBSITE_URL = "https://backjo2024.up.railway.app"
+WEBSITE_URL = ""
 
 # Optionnel : définir une valeur par défaut si la variable n'est pas trouvée
 if not WEBSITE_URL:
@@ -54,6 +54,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissios.AllowAny',
     ),
 }
 
